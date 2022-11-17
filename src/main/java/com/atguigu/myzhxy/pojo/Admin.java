@@ -8,11 +8,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@TableName("tb_admin")
+@AllArgsConstructor //自动生成构造函数
+@NoArgsConstructor //自动生成无参数构造函数
+@TableName("tb_admin") //绑定数据库
 public class Admin {
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO) //指定主键
     private Integer id;
     private String name;
     private char gender;
