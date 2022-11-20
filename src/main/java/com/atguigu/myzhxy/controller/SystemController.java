@@ -10,6 +10,7 @@ import com.atguigu.myzhxy.service.TeacherService;
 import com.atguigu.myzhxy.util.CreateVerifiCodeImage;
 import com.atguigu.myzhxy.util.JwtHelper;
 import com.atguigu.myzhxy.util.Result;
+import com.atguigu.myzhxy.util.ResultCodeEnum;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,40 @@ public class SystemController {
     private StudentService studentService;
     @Autowired
     private TeacherService teacherService;
+
+    @ApiOperation("通过token口令获取当前登录的用户信息的方法")
+    @GetMapping("/getInfo")
+    public Result getInfoByToken(
+            @ApiParam("token口令") @RequestHeader("token") String token) {
+        boolean expiration = JwtHelper.isExpiration(token);
+        if (expiration) {
+            return Result.build(null, ResultCodeEnum.TOKEN_ERROR);
+        }
+        //从token中解析出 用户id 和用户的类型
+        Long userId = JwtHelper.getUserId(token);
+        Integer userType = JwtHelper.getUserType(token);
+
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        switch (userType) {
+            case 1:
+                Admin admin = adminService.getAdminById(userId);
+                map.put("userType", 1);
+                map.put("user", admin);
+                break;
+            case 2:
+                Student student = studentService.getStudentById(userId);
+                map.put("userType", 2);
+                map.put("user", student);
+                break;
+            case 3:
+                Teacher teacher = teacherService.getByTeacherById(userId);
+                map.put("userType", 3);
+                map.put("user", teacher);
+                break;
+        }
+        return Result.ok(map);
+    }
 
 
     @ApiOperation("登录的方法")

@@ -6,4 +6,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface AdminService extends IService<Admin> {
     Admin login(LoginForm loginForm);
+
+    Admin getAdminById(Long userId);
 }
